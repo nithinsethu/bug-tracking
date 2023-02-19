@@ -1,10 +1,13 @@
 package database
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/nithinsethu/bug-tracking/config"
+	"github.com/nithinsethu/bug-tracking/constants"
 	"github.com/nithinsethu/bug-tracking/database/models"
+	"github.com/nithinsethu/bug-tracking/interfaces"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -22,11 +25,31 @@ func NewPostgresDB() *PostgresDB {
 	return &PostgresDB{db: db}
 }
 
+func (pg *PostgresDB) InitDB() {
+	q := fmt.Sprintf(`DO $$ BEGIN
+	CREATE TYPE role AS ENUM (
+					'%v',
+					'%v');
+	EXCEPTION
+	WHEN duplicate_object THEN null;
+	END $$;`, constants.RoleAdmin, constants.RoleMember)
+	pg.db.Exec(q)
+	pg.AutoMigrate()
+}
+
+func (pg *PostgresDB) GetdbInstance() *gorm.DB {
+	return pg.db
+}
+
 func (pg *PostgresDB) AutoMigrate() {
-	if !pg.db.Migrator().HasTable("organisations") {
-		err := pg.db.AutoMigrate(&models.Organisation{})
-		if err != nil {
-			log.Fatal(err)
+	tables := []interfaces.Model{&models.Organisation{}, &models.User{}}
+
+	for _, t := range tables {
+		if !pg.db.Migrator().HasTable(t.TableName()) {
+			err := pg.db.AutoMigrate(t)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }
