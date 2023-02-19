@@ -38,5 +38,20 @@ func (ac *AuthController) signupHandler(c *gin.Context) {
 }
 
 func (ac *AuthController) loginHandler(c *gin.Context) {
-	c.JSON(http.StatusAccepted, gin.H{"success": "Logged in successfully"})
+	var lr dtos.LoginRequest
+	err := c.BindJSON(&lr)
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	cookie, err := ac.as.LoginUser(lr)
+	if err != nil {
+		if err.Error() == constants.ErrorUnknown {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	http.SetCookie(c.Writer, cookie)
+	c.Status(http.StatusOK)
 }

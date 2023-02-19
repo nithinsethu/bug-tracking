@@ -2,7 +2,6 @@ package enums
 
 import (
 	"database/sql/driver"
-	"errors"
 	"fmt"
 )
 
@@ -14,11 +13,11 @@ const (
 )
 
 func (r *Role) Scan(value interface{}) error {
-	bytes, ok := value.([]byte)
+	v, ok := value.(string)
 	if !ok {
-		return errors.New(fmt.Sprint("Failed to scan role from the database driver: ", value))
+		return fmt.Errorf("failed to scan role from the database driver: %v", value)
 	}
-	*r = Role(bytes)
+	*r = Role(v)
 	return nil
 }
 

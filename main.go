@@ -3,13 +3,12 @@ package main
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/nithinsethu/bug-tracking/constants"
 	"github.com/nithinsethu/bug-tracking/controllers"
 	"github.com/nithinsethu/bug-tracking/database"
 	"github.com/nithinsethu/bug-tracking/repositories"
 	"github.com/nithinsethu/bug-tracking/services"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {

@@ -17,3 +17,9 @@ func (ur *UserRepository) Save(u *models.User) (*models.User, error) {
 	result := ur.db.Create(u)
 	return u, result.Error
 }
+
+func (ur *UserRepository) FindByEmail(email string) (*models.User, error) {
+	user := &models.User{}
+	result := ur.db.Where("email = ?", email).First(&user)
+	return user, result.Error
+}
