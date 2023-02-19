@@ -65,6 +65,7 @@ func (as *AuthService) LoginUser(r dtos.LoginRequest) (*http.Cookie, error) {
 		Name:    "token",
 		Value:   token,
 		Expires: expiry,
+		Path:    constants.RouteRoot,
 	}, nil
 }
 
