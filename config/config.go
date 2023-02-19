@@ -7,6 +7,7 @@ import (
 )
 
 var PostgresDSN string
+var JWTSecret string
 
 func init() {
 	envMap, err := godotenv.Read(".env")
@@ -14,4 +15,5 @@ func init() {
 		log.Fatal("Error Loading .env")
 	}
 	PostgresDSN = envMap["POSTGRES_DSN"]
+	JWTSecret = envMap["JWT_SECRET"]
 }
